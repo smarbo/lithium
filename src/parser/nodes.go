@@ -6,19 +6,30 @@ type NodeExprI interface {
 	IsNodeExpr()
 }
 
-type NodeExprIntLit struct {
+type NodeTermI interface {
+	IsNodeTerm()
+}
+
+type NodeTermIntLit struct {
 	IntLit t.Token
 }
 
-type NodeExprIdent struct {
+type NodeTermIdent struct {
 	Ident t.Token
 }
 
-func (n NodeExprIntLit) IsNodeExpr() {}
-func (n NodeExprIdent) IsNodeExpr()  {}
+func (n NodeTerm) IsNodeExpr()    {}
+func (n NodeBinExpr) IsNodeExpr() {}
+
+func (n NodeTermIntLit) IsNodeTerm() {}
+func (n NodeTermIdent) IsNodeTerm()  {}
 
 type NodeExpr struct {
 	Var NodeExprI
+}
+
+type NodeTerm struct {
+	Var NodeTermI
 }
 
 type NodeStmtI interface {
@@ -43,4 +54,25 @@ type NodeStmt struct {
 
 type NodeProg struct {
 	Stmts []NodeStmt
+}
+
+type NodeBinExprAdd struct {
+	lhs NodeExpr
+	rhs NodeExpr
+}
+
+type NodeBinExprMulti struct {
+	lhs NodeExpr
+	rhs NodeExpr
+}
+
+type BinExprI interface {
+	IsBinExpr()
+}
+
+func (b NodeBinExprAdd) IsBinExpr()   {}
+func (b NodeBinExprMulti) IsBinExpr() {}
+
+type NodeBinExpr struct {
+	Var BinExprI
 }

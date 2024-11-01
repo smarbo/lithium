@@ -2,6 +2,7 @@ package parser
 
 import (
 	"errors"
+	"log"
 
 	t "github.com/smarbo/lithium/src/tokens"
 )
@@ -25,14 +26,51 @@ func (p *Parser) consume() t.Token {
 	return p.tokens[p.index-1]
 }
 
-func (p *Parser) ParseExpr() *NodeExpr {
-	if p.peek(0) != nil && p.peek(0).Type == t.IntLit {
-		return &(NodeExpr{Var: NodeExprIntLit{IntLit: p.consume()}})
-	} else if p.peek(0) != nil && p.peek(0).Type == t.Ident {
-		return &(NodeExpr{Var: NodeExprIdent{Ident: p.consume()}})
+func (p *Parser) ParseBinExpr() *NodeBinExpr {
+	if lhs := p.ParseExpr(); lhs != nil {
+		bin_expr := NodeBinExpr{}
+		if p.peek(0) != nil && p.peek(0).Type == t.Plus {
+			bin_expr_add := NodeBinExprAdd{lhs: *lhs}
+			p.consume()
+			if rhs := p.ParseExpr(); rhs != nil {
+				bin_expr_add.rhs = *rhs
+				bin_expr.Var = bin_expr_add
+				return &bin_expr
+			} else {
+				log.Fatal("lithium compilation error: expected expression")
+				return nil
+			}
+		} else {
+			log.Fatal("lithium compilation error: unsupported binary operator")
+			return nil
+		}
 	} else {
 		return nil
 	}
+}
+
+func (p *Parser) ParseTerm() *NodeTerm {
+	if p.peek(0) != nil && p.peek(0).Type == t.IntLit {
+		return &NodeTerm{Var: NodeTermIntLit{IntLit: p.consume()}}
+	} else if p.peek(0) != nil && p.peek(0).Type == t.Ident {
+		return &NodeTerm{Var: NodeTermIdent{Ident: p.consume()}}
+	} else {
+		return nil
+	}
+}
+
+func (p *Parser) ParseExpr() *NodeExpr {
+	if term := p.ParseTerm(); term != nil {
+		return nil
+	} else {
+		return nil
+	}
+
+	//else if bin_expr := p.ParseBinExpr(); bin_expr != nil {
+	//return &NodeExpr{Var: bin_expr}
+	//} else {
+	//return nil
+	//}
 }
 
 func (p *Parser) ParseStmt() (error, *NodeStmt) {

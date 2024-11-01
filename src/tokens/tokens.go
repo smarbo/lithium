@@ -11,6 +11,7 @@ const (
 	Ident
 	Let
 	Eq
+	Plus
 )
 
 type Token struct {

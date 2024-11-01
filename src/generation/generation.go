@@ -21,6 +21,8 @@ func (g *Generator) GenExpr(expr p.NodeExpr) {
 		} else {
 			log.Fatal("lithium compilation error: undeclared identifier: " + v.Ident.Value)
 		}
+	case p.NodeBinExpr:
+		log.Fatal("not implemented yet (binary expresion)")
 	}
 }
 

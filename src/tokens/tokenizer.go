@@ -91,6 +91,12 @@ func (t *Tokenizer) Tokenize() (error, []Token) {
 				Type: CloseParen,
 			})
 			continue
+		} else if *(t.peek(1)) == '+' {
+			t.consume()
+			tokens = append(tokens, Token{
+				Type: Plus,
+			})
+			continue
 		} else if uni.IsSpace(*t.peek(1)) {
 			t.consume()
 			continue

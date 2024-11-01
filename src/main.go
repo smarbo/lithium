@@ -51,16 +51,17 @@ func main() {
 	generator := g.Init(*prog)
 	asm_data := generator.GenProg()
 
-	file, err = os.Create("out.asm")
+	os.Mkdir("build/", 0755)
+	file, err = os.Create("/tmp/li_out.asm")
 	check(err)
 	defer file.Close()
 	_, err = file.WriteString(asm_data)
 	check(err)
 
-	outPath := "out"
-	cmd := exec.Command("nasm", "-felf64", "out.asm")
+	outPath := "build/out"
+	cmd := exec.Command("nasm", "-felf64", "/tmp/li_out.asm")
 	cmd.Run()
-	cmd = exec.Command("ld", "-o", outPath, "out.o")
+	cmd = exec.Command("ld", "-o", outPath, "/tmp/li_out.o")
 	cmd.Run()
 	fmt.Println(ansi.Color(input+" compiled to '"+outPath+"' successfully!", "green"))
 
